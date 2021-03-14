@@ -4,12 +4,14 @@ import { CircularProgressbarWithChildren } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
 const Pomodoro = () => {
+ 
   let times = {
-    work: 25 * 60 * 1000,
+    work: 1 * 60 * 1000,
     rest: 5 * 60 * 1000,
     long: 15 * 60 * 1000,
   };
   const [timeleft, setTimeLeft] = useState(times.work);
+  const [initialTime, setInitialTime] = useState(times.work)
   const [count, setCount] = useState(1);
   const [isResting, setIsResting] = useState(false);
   const [error, setError] = useState(false);
@@ -36,23 +38,27 @@ const Pomodoro = () => {
   const stopClock = () => {
     if (timerId.current) {
       clearInterval(timerId.current);
-      setTimeLeft(25 * 60 * 1000);
+      setTimeLeft(times.work);
       timerId.current = undefined;
     }
   };
 
   if (timeleft === 0) {
     if (isResting) {
+      setInitialTime(times.work)
       setTimeLeft(times.work);
       setIsResting(false);
       setError(false);
+      
     } else {
       setCount((count) => count + 1);
 
       if (count === 4) {
+        setInitialTime(times.long)
         setTimeLeft(times.long);
         setCount(1);
       } else {
+        setInitialTime(times.rest)
         setTimeLeft(times.rest);
       }
     }
@@ -64,10 +70,14 @@ const Pomodoro = () => {
     }
   }, [count]);
 
+  let value = 100 - ( timeleft * 100 ) / initialTime
+    
+   
+
   return (
     <div className="pomodoro">
       <CircularProgressbarWithChildren
-        value={(100 / 25) * (25 - minutes) - 100 / 25}
+        value={value}
       >
         <div className="clock">
           {minutes}:{seconds < 10 ? "0" + seconds : seconds}
@@ -80,10 +90,10 @@ const Pomodoro = () => {
         ) : null}
       </CircularProgressbarWithChildren>
 
-      <div className="start" onClick={startClock}>
+      <div className="start" onClick={startClock} style={{ cursor: "pointer" }}>
         {timerId.current ? "Reset" : "Start"}
       </div>
-      <div className="stop" onClick={stopClock}>
+      <div className="stop" onClick={stopClock} style={{ cursor: "pointer" }}>
         Stop
       </div>
     </div>
