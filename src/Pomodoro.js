@@ -26,7 +26,7 @@ const Pomodoro = () => {
       setCount(1);
       timerId.current = setInterval(() => {
         setTimeLeft((timeleft) => timeleft - 1000);
-      }, 100);
+      }, 1000);
       setError(false);
     } else {
       setError(true);
